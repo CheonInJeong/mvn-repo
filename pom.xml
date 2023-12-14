@@ -16,56 +16,52 @@
     </properties>
     <distributionManagement>
         <repository>
-            <id>local-repo</id> <!-- 이 ID는 임의로 설정 가능하며 유일하게 식별 가능하면 됩니다. -->
-            <url>file://${project.build.directory}/mvn-repo</url> <!-- 로컬 저장소 경로로 설정 -->
+            <id>repo</id> <!-- 이 ID는 임의로 설정 가능하며 유일하게 식별 가능하면 됩니다. -->
+            <url>https://github.com/CheonInJeong/mvn-repo/raw/dev/releases</url> <!-- 로컬 저장소 경로로 설정 -->
         </repository>
+        <snapshotRepository>
+            <id>snapshot-repo</id> <!-- 이 ID는 임의로 설정 가능하며 유일하게 식별 가능하면 됩니다. -->
+            <url>https://github.com/CheonInJeong/mvn-repo/raw/dev/snapshots</url> <!-- 로컬 저장소 경로로 설정 -->
+        </snapshotRepository>
     </distributionManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.8</version>
-                <configuration>
-                    <message>Maven artifacts for ${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                    <branch>refs/origin/mvn-repo</branch>
-                    <merge>true</merge> <!-- 이것도 추가 -->
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <repositoryName>mvn-repo</repositoryName>
-                    <repositoryOwner>CheonInJeong</repositoryOwner>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-                <!-- site-maven-plugin 0.7 버전에서 에러 안 나도록, 아래 내용 추가 -->
-
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.mylyn.github</groupId>
-                        <artifactId>org.eclipse.egit.github.core</artifactId>
-                        <version>2.0.3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>com.github.github</groupId>-->
+<!--                <artifactId>site-maven-plugin</artifactId>-->
+<!--                <version>0.7</version>-->
+<!--                <configuration>-->
+<!--                    <message>Maven artifacts for ${project.version}</message>-->
+<!--                    <noJekyll>true</noJekyll>-->
+<!--                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>-->
+<!--                    <branch>refs/origin/dev</branch>-->
+<!--                    <merge>true</merge> &lt;!&ndash; 이것도 추가 &ndash;&gt;-->
+<!--                    <includes>-->
+<!--                        <include>**/*</include>-->
+<!--                    </includes>-->
+<!--                    <repositoryName>mvn-repo</repositoryName>-->
+<!--                    <repositoryOwner>CheonInJeong</repositoryOwner>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>site</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>deploy</phase>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                &lt;!&ndash; site-maven-plugin 0.7 버전에서 에러 안 나도록, 아래 내용 추가 &ndash;&gt;-->
+<!--            </plugin>-->
+<!--&lt;!&ndash;            <plugin>&ndash;&gt;-->
+<!--&lt;!&ndash;                <artifactId>maven-deploy-plugin</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;                <version>2.8.1</version>&ndash;&gt;-->
+<!--&lt;!&ndash;                <configuration>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>&ndash;&gt;-->
+<!--&lt;!&ndash;                </configuration>&ndash;&gt;-->
+<!--&lt;!&ndash;            </plugin>&ndash;&gt;-->
+<!--        </plugins>-->
+<!--    </build>-->
 
     <dependencies>
         <!-- 예: JUnit 의존성 추가 -->
@@ -79,11 +75,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version> <!-- 버전은 최신 버전으로 업데이트하세요 -->
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.mylyn.github</groupId>
-            <artifactId>org.eclipse.egit.github.core</artifactId>
-            <version>2.0.4</version>
         </dependency>
     </dependencies>
 </project>
