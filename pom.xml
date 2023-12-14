@@ -13,55 +13,82 @@
         <project.build.directory>/C:/dev/repo</project.build.directory>
         <project.version>0.0.1</project.version>
         <github.global.server>github</github.global.server>
+        <repository-name>mvn-repo</repository-name>
+        <repository-owner>CheonInJeong</repository-owner>
+        <branch-name>main</branch-name>
     </properties>
     <distributionManagement>
         <repository>
-            <id>repo</id> <!-- 이 ID는 임의로 설정 가능하며 유일하게 식별 가능하면 됩니다. -->
-            <url>https://github.com/CheonInJeong/mvn-repo/raw/dev/releases</url> <!-- 로컬 저장소 경로로 설정 -->
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-artifact</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshot-repo</id> <!-- 이 ID는 임의로 설정 가능하며 유일하게 식별 가능하면 됩니다. -->
-            <url>https://github.com/CheonInJeong/mvn-repo/raw/dev/snapshots</url> <!-- 로컬 저장소 경로로 설정 -->
-        </snapshotRepository>
     </distributionManagement>
 
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>com.github.github</groupId>-->
-<!--                <artifactId>site-maven-plugin</artifactId>-->
-<!--                <version>0.7</version>-->
-<!--                <configuration>-->
-<!--                    <message>Maven artifacts for ${project.version}</message>-->
-<!--                    <noJekyll>true</noJekyll>-->
-<!--                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>-->
-<!--                    <branch>refs/origin/dev</branch>-->
-<!--                    <merge>true</merge> &lt;!&ndash; 이것도 추가 &ndash;&gt;-->
-<!--                    <includes>-->
-<!--                        <include>**/*</include>-->
-<!--                    </includes>-->
-<!--                    <repositoryName>mvn-repo</repositoryName>-->
-<!--                    <repositoryOwner>CheonInJeong</repositoryOwner>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>site</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>deploy</phase>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                &lt;!&ndash; site-maven-plugin 0.7 버전에서 에러 안 나도록, 아래 내용 추가 &ndash;&gt;-->
-<!--            </plugin>-->
-<!--&lt;!&ndash;            <plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;                <artifactId>maven-deploy-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;                <version>2.8.1</version>&ndash;&gt;-->
-<!--&lt;!&ndash;                <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>&ndash;&gt;-->
-<!--&lt;!&ndash;                </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;            </plugin>&ndash;&gt;-->
-<!--        </plugins>-->
-<!--    </build>-->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <!--to add our artifact(s) to a local repository in the directory ${project.build.directory}/mvn-artifact:-->
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <altDeploymentRepository>
+                            internal.repo::default::file://${project.build.directory}/mvn-artifact
+                        </altDeploymentRepository>
+                    </configuration>
+                </plugin>
+                <!--to push source files with Maven artifacts-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.12</version>
+                    <configuration>
+                        <message>Maven artifacts for ${project.version}</message>
+                        <noJekyll>true</noJekyll>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
+                        <branch>refs/heads/${branch-name}</branch>
+                        <includes>
+                            <include>**/*</include>
+                        </includes>
+                        <merge>true</merge>
+                        <repositoryName>${repository-name}</repositoryName>
+                        <repositoryOwner>${repository-owner}</repositoryOwner>
+                        <server>${github.global.server}</server>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>site</goal>
+                            </goals>
+                            <phase>deploy</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <dependencies>
         <!-- 예: JUnit 의존성 추가 -->
